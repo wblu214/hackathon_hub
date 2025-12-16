@@ -1,66 +1,76 @@
-## Foundry
+Omnichain 开发者激励协议 - 项目核心摘要
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+1. 项目定位
 
-Foundry consists of:
+一句话描述：一个基于 ZetaChain 的全链（Omnichain）开发者项目发现与激励 DApp。
 
-- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
-- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
-- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
-- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+核心价值：
 
-## Documentation
+全链资产支付：支持 EVM + BTC 原生资产。
 
-https://book.getfoundry.sh/
+可信热度：项目热度（点赞/打赏）完全由链上真金白银的行为验证，杜绝刷榜。
 
-## Usage
+协议级设施：不仅仅是一个网站，而是一个用于分发开发者声誉和激励的链上账本。
 
-### Build
+2. 经济模型与费率设计（最新）
 
-```shell
-$ forge build
-```
+行为类型费用 / 门槛资金流向/说明核心目的项目发布费3.5 U协议收入 / 奖池提高垃圾项目门槛，确立基础价值。挂组折扣实付 2.45 U(原价返还 30%)增长裂变：激励项目方加入官方/社区 Hackathon 组。官方组建费35 U协议收入B端收入：组织者创建官方黑客松组的费用（高曝光）。点赞质押1 U / 次锁仓在合约中Sybil Resistance：防止机器人刷榜，点赞即质押（Stake-to-Like）。用户打赏1~20 U直接转给项目方开发者收入：支持多档位（1/3/5/10/20 U），多链资产直接结算。
 
-### Test
+3. 整体架构设计
 
-```shell
-$ forge test
-```
+核心思想：ZetaChain 负责“统一认账和逻辑执行”，源链负责“支付与触发”。
 
-### Format
+源链 (Source Chains)：ETH, BSC, BTC 等。
 
-```shell
-$ forge fmt
-```
+用户行为：支付上架费、发起打赏。
 
-### Gas Snapshots
+ZetaChain (Core Layer)：
 
-```shell
-$ forge snapshot
-```
+统一账本：记录项目元数据、点赞数、打赏总额。
 
-### Anvil
+跨链消息处理：验证源链的支付回调。
 
-```shell
-$ anvil
-```
+逻辑计算：执行排位权重算法。
 
-### Deploy
+前端 (Web App)：
 
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
+纯展示层：读取链上数据，展示排行榜。
 
-### Cast
+排序逻辑：负责将链上的“数值”进行排序展示（节省 Gas）。
 
-```shell
-$ cast <subcommand>
-```
+4. 关键功能模块
 
-### Help
+项目上架 (Listing)：跨链支付 -> ZetaChain 验证 -> 写入全局列表。
 
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+点赞系统 (Stake-to-Like)：用户需质押资产才能点赞，支持多次质押累加权重，防刷量。
+
+打赏系统 (Omnichain Tip)：用户任意链支付 -> ZetaChain 记账 -> 项目方统一收款。
+
+排行榜 (Ranking)：基于 [上架时间 + 总赞赏金额 + 质押权重] 计算，数据在链上，排序在前端/Indexer。
+
+5. 核心技术哲学（评委问答/防守策略）
+
+为什么点赞/打赏要上链？（Gas 问题）
+
+回答：因为这是“价值行为”而非“交互行为”。只有上链产生的 Gas 成本和质押成本，才能构建“可信的”项目热度账本。
+
+如何解决性能与成本矛盾？
+
+原则：写有成本（上链），读无成本（前端）。
+
+实现：合约只存储最小必要状态（如 totalStake, totalTips），具体的排行榜排序逻辑交给前端或 Indexer 处理，不消耗 Gas。
+
+6. 合约架构（模块化）
+
+ProjectRegistry: 管理项目生命周期、校验上架费。
+
+StakeLikeManager: 处理质押点赞逻辑、权重计算。
+
+TipManager: 处理打赏记账、收益分配。
+
+OmnichainReceiver: 统一接收并验证跨链消息。
+
+
+打赏金额平台分成比例：项目方 95%，平台方 5%
+记得写出合约提款功能，方便平台提款，然后记得提款权限的设计，还有一些错误的处理，返回出来，使用revert，不要使用require
+还有，点赞和打赏的用户，要显示在项目下面，方便用户查看，展示头像和usaername
