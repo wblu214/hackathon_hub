@@ -2,7 +2,7 @@ Omnichain 开发者激励协议 - 项目核心摘要
 
 1. 项目定位
 
-一句话描述：一个基于 ZetaChain 的全链（Omnichain）开发者项目发现与激励 DApp。
+一句话描述：一个基于 ZetaChain 的多链（Omnichain）开发者项目发现与激励 DApp。
 
 核心价值：
 
